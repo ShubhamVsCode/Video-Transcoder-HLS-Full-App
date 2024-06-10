@@ -1,10 +1,13 @@
 "use client";
 
 import VideoJS from "@/components/core/videojs";
-import React, { useRef } from "react";
+import { Button } from "@/components/ui/button";
+import React, { useRef, useState } from "react";
 
-const VideoPage = () => {
+const VideoPage = ({ params }: { params: { videoId: string } }) => {
+  const source = `https://s3.ap-south-1.amazonaws.com/hls-prod.shubhamvscode/${params.videoId}`;
   const playerRef = useRef(null);
+  const [resolution, setResolution] = useState(360);
 
   const videoJsOptions = {
     autoplay: true,
@@ -18,15 +21,7 @@ const VideoPage = () => {
     },
     sources: [
       {
-        src: "https://s3.ap-south-1.amazonaws.com/hls-prod.shubhamvscode/output_360p/hls_360p.m3u8",
-        type: "application/x-mpegURL",
-      },
-      {
-        src: "https://s3.ap-south-1.amazonaws.com/hls-prod.shubhamvscode/output_480p/hls_480p.m3u8",
-        type: "application/x-mpegURL",
-      },
-      {
-        src: "https://s3.ap-south-1.amazonaws.com/hls-prod.shubhamvscode/output_720p/hls_720p.m3u8",
+        src: `${source}/output_${resolution}p/hls_${resolution}p.m3u8`,
         type: "application/x-mpegURL",
       },
     ],
@@ -35,19 +30,31 @@ const VideoPage = () => {
   const handlePlayerReady = (player: any) => {
     playerRef.current = player;
 
-    // You can handle player events here, for example:
     player.on("waiting", () => {
-      videojs.log("player is waiting");
+      console.log("player is waiting");
     });
 
     player.on("dispose", () => {
-      videojs.log("player will dispose");
+      console.log("player will dispose");
     });
   };
 
   return (
-    <div>
-      <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />
+    <div className="container p-10">
+      <div className="flex flex-col items-center">
+        <h1 className="text-4xl font-bold">Video</h1>
+        <p className="text-2xl font-bold">{params.videoId}</p>
+      </div>
+
+      <div className="max-w-screen-md mx-auto mt-10 rounded-lg overflow-hidden">
+        <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />
+      </div>
+
+      <div className="flex gap-3 items-center justify-center mt-5">
+        <Button onClick={() => setResolution(360)}>360p</Button>
+        <Button onClick={() => setResolution(480)}>480p</Button>
+        <Button onClick={() => setResolution(720)}>720p</Button>
+      </div>
     </div>
   );
 };

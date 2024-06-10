@@ -1,7 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function Home() {
@@ -87,13 +88,19 @@ export default function Home() {
   };
 
   const stopPolling = () => {
-    clearInterval(intervalId);
-    setIntervalId(null);
+    if (intervalId) {
+      clearInterval(intervalId);
+      setIntervalId(null);
+    }
   };
 
+  useEffect(() => {
+    getAllVideos();
+  }, []);
+
   return (
-    <div className="w-full max-w-4xl mx-auto py-12 md:py-20 lg:py-28">
-      <div className="grid gap-8 md:gap-12 lg:gap-16">
+    <div className="w-full max-w-4xl mx-auto py-12 md:py-20 lg:py-10">
+      <div className="grid gap-8 md:gap-12 lg:gap-8">
         <div className="grid gap-4 md:gap-6 lg:gap-8">
           <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
             Video Platform
@@ -105,9 +112,9 @@ export default function Home() {
         </div>
 
         <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-6 md:p-8 lg:p-10 grid gap-6 md:gap-8 lg:gap-10">
-          <label htmlFor="video">
+          <label htmlFor="video" className="cursor-pointer">
             <div
-              className="flex items-center justify-center w-full aspect-video bg-gray-200 dark:bg-gray-700 rounded-lg"
+              className="flex items-center justify-center mx-40 aspect-video bg-gray-200 dark:bg-gray-700 rounded-lg"
               onDragOver={(event) => {
                 event.preventDefault();
                 setIsDropping(true);
@@ -143,17 +150,13 @@ export default function Home() {
                 />
                 <p>{file?.name}</p>
                 <div>
-                  {isUploading ? (
-                    "Uploading..."
-                  ) : (
-                    <Button
-                      variant="outline"
-                      onClick={handleUpload}
-                      disabled={isUploading || !file}
-                    >
-                      {isUploading ? "Uploading..." : "Upload Video"}
-                    </Button>
-                  )}
+                  <Button
+                    variant="outline"
+                    onClick={handleUpload}
+                    disabled={isUploading || !file}
+                  >
+                    {isUploading ? "Uploading..." : "Upload Video"}
+                  </Button>
                 </div>
               </div>
             </div>
@@ -175,7 +178,15 @@ export default function Home() {
                 key={video.key}
                 className="flex justify-between items-center"
               >
-                {video.key}{" "}
+                <Link
+                  href={`/video/${video.key
+                    ?.replace("video:", "")
+                    ?.replace(":status", "")}`}
+                >
+                  <Button variant={"link"}>
+                    {video.key?.replace("video:", "")?.replace(":status", "")}
+                  </Button>
+                </Link>
                 <span
                   className={`ml-2 font-semibold uppercase ${
                     video.status === "processed"
