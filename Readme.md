@@ -1,4 +1,4 @@
-![video-transcoder-hls png](https://github.com/ShubhamVsCode/Video-Transcoder-HLS-Full-App/assets/99742546/fe23f673-4b23-4127-8554-0ad2bfb18d50)# Video Transcoder with HLS support
+# Video Transcoder with HLS support
 
 You can upload a video in 1080p and it will transcode in different resolution with ffmpeg and support HLS(HTTP Live Streaming) for better video viewing experience
 
