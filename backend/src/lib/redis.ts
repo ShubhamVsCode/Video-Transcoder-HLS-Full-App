@@ -15,25 +15,25 @@ export const getVideoStatus = async (key: string) => {
 };
 
 export const getAllVideosStatus = async () => {
-  const fetchSize = 100;
+  const fetchSize = 10;
   let cursor = "0";
   let results = [];
 
-  do {
-    const reply = await redis.scan(
-      cursor,
-      "MATCH",
-      "video:*:status",
-      "COUNT",
-      fetchSize,
-    );
-    cursor = reply[0];
-    const keys = reply[1];
-    for (let key of keys) {
-      const status = await redis.get(key);
-      results.push({ key, status });
-    }
-  } while (cursor !== "0");
+  // do {
+  const reply = await redis.scan(
+    cursor,
+    "MATCH",
+    "video:*:status",
+    "COUNT",
+    fetchSize,
+  );
+  cursor = reply[0];
+  const keys = reply[1];
+  for (let key of keys) {
+    const status = await redis.get(key);
+    results.push({ key, status });
+  }
+  // } while (cursor !== "0");
 
   return results;
 };
